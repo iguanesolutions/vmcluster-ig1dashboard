@@ -53,7 +53,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1582891128513,
+  "iteration": 1582908434328,
   "links": [
     {
       "icon": "doc",
@@ -799,11 +799,11 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
-      "colorValue": false,
+      "colorValue": true,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
+        "#E02F44"
       ],
       "datasource": "$datasource",
       "decimals": null,
@@ -866,7 +866,7 @@
           "refId": "A"
         }
       ],
-      "thresholds": "",
+      "thresholds": "1,1",
       "timeFrom": null,
       "timeShift": null,
       "title": "Requests errors rate",
@@ -884,11 +884,11 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
-      "colorValue": false,
+      "colorValue": true,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
+        "#E02F44"
       ],
       "datasource": "$datasource",
       "decimals": null,
@@ -951,7 +951,7 @@
           "refId": "A"
         }
       ],
-      "thresholds": "",
+      "thresholds": "1,1",
       "timeFrom": null,
       "timeShift": null,
       "title": "RPC errors rate",
@@ -971,11 +971,11 @@
       "colorBackground": false,
       "colorPostfix": false,
       "colorPrefix": false,
-      "colorValue": false,
+      "colorValue": true,
       "colors": [
         "#56A64B",
         "#FF780A",
-        "#FF780A"
+        "#E02F44"
       ],
       "datasource": "$datasource",
       "description": "Shows how many of new time-series are created every second.  High churn rate tightly connected with database performance and may result in unexpected OOM's or slow queries. It is recommended to always keep an eye on this metric to avoid unexpected cardinality \"explosions\".\n\nGood references to read:\n* https://www.robustperception.io/cardinality-is-key\n* https://www.robustperception.io/using-tsdb-analyze-to-investigate-churn-and-cardinality",
@@ -1552,7 +1552,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate and the current average size of one datapoint.",
+      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate and the current average size of one datapoint.\n\nDo note that as it is based on ingestion rate, if you use deduplication on vmstorage, the real projection might be lower depending on the dedup conf and the number of clients sending data.",
       "format": "bytes",
       "gauge": {
         "maxValue": 100,
@@ -1647,7 +1647,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate and the current average size of one datapoint.\n\nneeded free space = projected total space usage - current space usage",
+      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate and the current average size of one datapoint.\n\nDo note that as it is based on ingestion rate, if you use deduplication on vmstorage, the real projection might be lower depending on the dedup conf and the number of clients sending data.",
       "format": "bytes",
       "gauge": {
         "maxValue": 100,
@@ -1742,7 +1742,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The recommended total amount of RAM for all the vmstorage instances can be calculated from the number of active time series: RAM = active_time_series * 1KB. Time series is active if it received at least a single data point during the last hour or if it has been queried during the last hour.",
+      "description": "The recommended total amount of RAM for all the vmstorage instances can be calculated from the number of active time series:\nRAM = active_time_series * 1KB.\n\nTime series is active if it received at least a single data point during the last hour or if it has been queried during the last hour.",
       "format": "kbytes",
       "gauge": {
         "maxValue": 100,
@@ -1837,7 +1837,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The recommended total amount of RAM for all the vmstorage instances can be calculated from the number of active time series: RAM = active_time_series * 1KB. Time series is active if it received at least a single data point during the last hour or if it has been queried during the last hour.\n\nUnusable RAM = allowed RAM - cache - needed RAM for active TS",
+      "description": "The recommended total amount of RAM for all the vmstorage instances can be calculated from the number of active time series: RAM = active_time_series * 1KB.\n\nTime series is active if it received at least a single data point during the last hour or if it has been queried during the last hour.\n\nUnusable RAM = allowed RAM - cache - needed RAM for active TS",
       "format": "bytes",
       "gauge": {
         "maxValue": 100,
@@ -1928,10 +1928,10 @@
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
+        "#E02F44"
       ],
       "datasource": "$datasource",
-      "description": "If > 0, too much concurrent inserts occured. -maxConcurrentInserts might be too low.",
+      "description": "If > 0, too much concurrent inserts occured. `-maxConcurrentInserts` might be too low.",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -2013,7 +2013,7 @@
       "colors": [
         "#56A64B",
         "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
+        "#E02F44"
       ],
       "datasource": "$datasource",
       "description": "Some row are losts, check the VM logs.",
@@ -2100,7 +2100,7 @@
         "#d44a3a"
       ],
       "datasource": "$datasource",
-      "description": "VictoriaMetrics stores various caches in RAM. Memory size for these caches may be limited with -`memory.allowedPercent` flag.",
+      "description": "VictoriaMetrics stores various caches in RAM. Memory size for these caches may be limited with `-memory.allowedPercent` flag.",
       "format": "percentunit",
       "gauge": {
         "maxValue": 100,
@@ -2182,10 +2182,10 @@
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
+        "#E02F44"
       ],
       "datasource": "$datasource",
-      "description": "If > 0, too many requests. -search.maxQueueDuration might be too low.",
+      "description": "If > 0, too many requests. `-search.maxQueueDuration` might be too low.",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -2266,11 +2266,11 @@
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
-        "#d44a3a"
+        "#E02F44"
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "Rate of queries that have exceeded the -search.logSlowQueryDuration value of vmselect nodes",
+      "description": "Rate of queries that have exceeded the `-search.logSlowQueryDuration` value of vmselect nodes",
       "format": "short",
       "gauge": {
         "maxValue": 100,
@@ -2645,7 +2645,7 @@
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -2705,7 +2705,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "alias": "/write/",
+              "alias": "/Tx/",
               "transform": "negative-Y"
             }
           ],
@@ -3116,11 +3116,12 @@
               "alias": "max",
               "color": "#E02F44",
               "fill": 0,
-              "legend": false
+              "legend": false,
+              "stack": false
             }
           ],
           "spaceLength": 10,
-          "stack": false,
+          "stack": true,
           "steppedLine": false,
           "targets": [
             {
@@ -3270,7 +3271,7 @@
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -3280,7 +3281,7 @@
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -3359,11 +3360,12 @@
           },
           "yaxes": [
             {
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -3372,7 +3374,7 @@
               "logBase": 1,
               "max": null,
               "min": null,
-              "show": true
+              "show": false
             }
           ],
           "yaxis": {
@@ -3451,10 +3453,10 @@
             {
               "decimals": 0,
               "format": "short",
-              "label": null,
+              "label": "",
               "logBase": 1,
               "max": null,
-              "min": null,
+              "min": "0",
               "show": true
             },
             {
@@ -3664,7 +3666,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$datasource",
-          "description": "zstd compression ratio(s)",
+          "description": "zstd compression ratio",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -3754,7 +3756,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$datasource",
-          "description": "Removed superflouos samples from time series if they are located closer to each other than the dedup duration. See the -dedup.minScrapeInterval flag.",
+          "description": "Removed superflouos samples from time series if they are located closer to each other than the dedup duration. Keep in mind that dedup on the storage is only performed during merge (aka delayed).\n\nSee the `-dedup.minScrapeInterval` flag.",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -3880,7 +3882,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "alias": "/write/",
+              "alias": "/Tx/",
               "transform": "negative-Y"
             }
           ],
@@ -4124,6 +4126,7 @@
           },
           "yaxes": [
             {
+              "decimals": 0,
               "format": "short",
               "label": null,
               "logBase": 1,
@@ -4453,7 +4456,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$datasource",
-          "description": "Removed superflouos samples from time series if they are located closer to each other than the dedup duration. See the -dedup.minScrapeInterval flag.",
+          "description": "Removed superflouos samples from time series if they are located closer to each other than the dedup duration. As dedup on storage is performed during merge, vmselect dedup points that have not been deduplicated yet by the storage.\n\nSee the `-dedup.minScrapeInterval` flag.",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -4580,7 +4583,7 @@
           "renderer": "flot",
           "seriesOverrides": [
             {
-              "alias": "/write/",
+              "alias": "/Tx/",
               "transform": "negative-Y"
             }
           ],
@@ -5409,6 +5412,5 @@
   "timezone": "",
   "title": "Victoria Metrics cluster - IG1 version",
   "uid": "a5de5bdcd6b4e6cf05a6212209efe6fe",
-  "version": 112
+  "version": 118
 }
-
