@@ -48,12 +48,12 @@
       }
     ]
   },
-  "description": "An alternate version of the Victoria Metrics cluster dashboard.",
+  "description": "An alternate version of the Victoria Metrics cluster dashboard for VM cluster v1.34.0 or higher",
   "editable": true,
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1582908434328,
+  "iteration": 1583151473271,
   "links": [
     {
       "icon": "doc",
@@ -547,7 +547,7 @@
       ],
       "datasource": "$datasource",
       "description": "Global HTTP requests rate for selected nodes",
-      "format": "none",
+      "format": "short",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -633,7 +633,7 @@
       ],
       "datasource": "$datasource",
       "description": "How many datapoints are inserted into storage per second (points per second)",
-      "format": "none",
+      "format": "short",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -722,7 +722,7 @@
       ],
       "datasource": "$datasource",
       "description": "Shows how many of new time-series are created every second.  High churn rate tightly connected with database performance and may result in unexpected OOM's or slow queries. It is recommended to always keep an eye on this metric to avoid unexpected cardinality \"explosions\".\n\nGood references to read:\n* https://www.robustperception.io/cardinality-is-key\n* https://www.robustperception.io/using-tsdb-analyze-to-investigate-churn-and-cardinality",
-      "format": "none",
+      "format": "short",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -799,7 +799,7 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
-      "colorValue": true,
+      "colorValue": false,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
@@ -808,7 +808,7 @@
       "datasource": "$datasource",
       "decimals": null,
       "description": "HTTP error rate for all selected nodes",
-      "format": "none",
+      "format": "short",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -884,7 +884,7 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
-      "colorValue": true,
+      "colorValue": false,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
@@ -893,7 +893,7 @@
       "datasource": "$datasource",
       "decimals": null,
       "description": "RPC errors are interconnection errors between cluster components. Errors rate should be 0 if network connection is stable and all components are up and operational.",
-      "format": "none",
+      "format": "short",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -971,7 +971,7 @@
       "colorBackground": false,
       "colorPostfix": false,
       "colorPrefix": false,
-      "colorValue": true,
+      "colorValue": false,
       "colors": [
         "#56A64B",
         "#FF780A",
@@ -979,7 +979,7 @@
       ],
       "datasource": "$datasource",
       "description": "Shows how many of new time-series are created every second.  High churn rate tightly connected with database performance and may result in unexpected OOM's or slow queries. It is recommended to always keep an eye on this metric to avoid unexpected cardinality \"explosions\".\n\nGood references to read:\n* https://www.robustperception.io/cardinality-is-key\n* https://www.robustperception.io/using-tsdb-analyze-to-investigate-churn-and-cardinality",
-      "format": "none",
+      "format": "short",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -1552,7 +1552,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate and the current average size of one datapoint.\n\nDo note that as it is based on ingestion rate, if you use deduplication on vmstorage, the real projection might be lower depending on the dedup conf and the number of clients sending data.",
+      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate and the current average size of one datapoint.\n\nDo note that as it is based on ingestion rate, if you use deduplication on vmstorage, the real projection might be lower depending on the number of deduplicated datapoints.",
       "format": "bytes",
       "gauge": {
         "maxValue": 100,
@@ -1743,7 +1743,7 @@
       "datasource": "$datasource",
       "decimals": null,
       "description": "The recommended total amount of RAM for all the vmstorage instances can be calculated from the number of active time series:\nRAM = active_time_series * 1KB.\n\nTime series is active if it received at least a single data point during the last hour or if it has been queried during the last hour.",
-      "format": "kbytes",
+      "format": "bytes",
       "gauge": {
         "maxValue": 100,
         "minValue": 0,
@@ -1804,7 +1804,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(vm_cache_entries{job=~\"$job\", instance=~\"$instance_storage\", type=\"storage/hour_metric_ids\"})",
+          "expr": "sum(vm_cache_entries{job=~\"$job\", instance=~\"$instance_storage\", type=\"storage/hour_metric_ids\"}) * 1000",
           "instant": false,
           "legendFormat": "",
           "refId": "A"
@@ -1813,7 +1813,7 @@
       "thresholds": "",
       "timeFrom": null,
       "timeShift": null,
-      "title": "vmstorage - Total RAM Needed for active TS",
+      "title": "vmstorage - Total RAM required for optimal performance",
       "type": "singlestat",
       "valueFontSize": "80%",
       "valueMaps": [
@@ -1837,7 +1837,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The recommended total amount of RAM for all the vmstorage instances can be calculated from the number of active time series: RAM = active_time_series * 1KB.\n\nTime series is active if it received at least a single data point during the last hour or if it has been queried during the last hour.\n\nUnusable RAM = allowed RAM - cache - needed RAM for active TS",
+      "description": "The recommended total amount of RAM for all the vmstorage instances can be calculated from the number of active time series: RAM = active_time_series * 1KB.\n\nTime series is active if it received at least a single data point during the last hour or if it has been queried during the last hour.\n\nUnused RAM = allowed RAM - cache - needed RAM for active TS",
       "format": "bytes",
       "gauge": {
         "maxValue": 100,
@@ -1924,7 +1924,7 @@
       "cacheTimeout": null,
       "colorBackground": false,
       "colorPostfix": false,
-      "colorValue": true,
+      "colorValue": false,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
@@ -2009,7 +2009,7 @@
       "cacheTimeout": null,
       "colorBackground": false,
       "colorPostfix": false,
-      "colorValue": true,
+      "colorValue": false,
       "colors": [
         "#56A64B",
         "rgba(237, 129, 40, 0.89)",
@@ -2178,7 +2178,7 @@
       "cacheTimeout": null,
       "colorBackground": false,
       "colorPostfix": false,
-      "colorValue": true,
+      "colorValue": false,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
@@ -2262,7 +2262,7 @@
     {
       "cacheTimeout": null,
       "colorBackground": false,
-      "colorValue": true,
+      "colorValue": false,
       "colors": [
         "#299c46",
         "rgba(237, 129, 40, 0.89)",
@@ -3623,7 +3623,7 @@
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "vmstorage - Complete Disk Space Usage",
+          "title": "vmstorage - Disk Space Usage",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -4719,12 +4719,10 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "label_values(vm_app_version{job=\"$tag\"}, instance)",
-        "tags": [
-          "victoria_metrics"
-        ],
+        "tags": [],
         "tagsQuery": "label_values(vm_app_version, job)",
         "type": "query",
-        "useTags": true
+        "useTags": false
       },
       {
         "allValue": null,
@@ -4743,12 +4741,10 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "label_values(vm_app_version{job=\"$tag\"}, instance)",
-        "tags": [
-          "victoria_metrics"
-        ],
+        "tags": [],
         "tagsQuery": "label_values(vm_app_version, job)",
         "type": "query",
-        "useTags": true
+        "useTags": false
       },
       {
         "allValue": null,
@@ -4767,12 +4763,10 @@
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "label_values(vm_app_version{job=\"$tag\"}, instance)",
-        "tags": [
-          "victoria_metrics"
-        ],
+        "tags": [],
         "tagsQuery": "label_values(vm_app_version, job)",
         "type": "query",
-        "useTags": true
+        "useTags": false
       },
       {
         "allValue": null,
@@ -5412,5 +5406,5 @@
   "timezone": "",
   "title": "Victoria Metrics cluster - IG1 version",
   "uid": "a5de5bdcd6b4e6cf05a6212209efe6fe",
-  "version": 118
+  "version": 128
 }
