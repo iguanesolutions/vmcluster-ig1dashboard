@@ -53,7 +53,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1583151473271,
+  "iteration": 1583761357056,
   "links": [
     {
       "icon": "doc",
@@ -1264,7 +1264,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The recommended total number of vCPU cores for all the vminsert and all the the vmstorages instances can be calculated from the ingestion rate: vCPUs = ingestion_rate / 150K.",
+      "description": "The recommended total number of vCPU cores for all the vminsert and all the the vmstorages instances can be calculated from the ingestion rate:\n\nvCPUs = ingestion_rate / 150K",
       "format": "none",
       "gauge": {
         "maxValue": 100,
@@ -1552,7 +1552,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate and the current average size of one datapoint.\n\nDo note that as it is based on ingestion rate, if you use deduplication on vmstorage, the real projection might be lower depending on the number of deduplicated datapoints.",
+      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate, the average of dedup points on the selected period and the average size of one datapoint.\n\nprojected size = (ingestion rate - avg rate of dedup for $__range) * avg size one of datapoint * selected retention\n\n",
       "format": "bytes",
       "gauge": {
         "maxValue": 100,
@@ -1614,7 +1614,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "with(\n  insertNodes = {job=~\"$job\", instance=~\"$instance_insert\"},\n  storageNodesData = {job=~\"$job\", instance=~\"$instance_storage\", type!=\"indexdb\"}\n )\nsum(rate(vm_rows_inserted_total{insertNodes})) * (sum(vm_data_size_bytes{storageNodesData}) / sum(vm_rows{storageNodesData})) * (3600 * 24 * 30.4167 * $retention)",
+          "expr": "with(\n  insertNodes = {job=~\"$job\", instance=~\"$instance_insert\"},\n  storageNodes = {job=~\"$job\", instance=~\"$instance_storage\"}\n )\n( sum(rate(vm_rows_inserted_total{insertNodes})) - sum(avg_over_time(rate(vm_deduplicated_samples_total{storageNodes, type=\"merge\"})[$__range])) ) * ( sum(vm_data_size_bytes{storageNodes, type!=\"indexdb\"}) / sum(vm_rows{storageNodes, type!=\"indexdb\"}) ) * ( 3600 * 24 * 30.4167 * $retention )",
           "instant": false,
           "legendFormat": "",
           "refId": "A"
@@ -1647,7 +1647,7 @@
       ],
       "datasource": "$datasource",
       "decimals": null,
-      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate and the current average size of one datapoint.\n\nDo note that as it is based on ingestion rate, if you use deduplication on vmstorage, the real projection might be lower depending on the dedup conf and the number of clients sending data.",
+      "description": "The total space needed to store all the datapoints during the selected retention given the current ingestion rate, the average of dedup points on the selected period and the average size of one datapoint.\n\nprojected size per vmstorage = ( (ingestion rate - avg rate of dedup for $__range) * avg size one of datapoint * selected retention ) / nb of vmstorage",
       "format": "bytes",
       "gauge": {
         "maxValue": 100,
@@ -1709,7 +1709,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "with(\n  insertNodes = {job=~\"$job\", instance=~\"$instance_insert\"},\n  storageNodes = {job=~\"$job\", instance=~\"$instance_storage\"},\n  storageNodesSize = {storageNodes, type!=\"indexdb\"}\n )\n(sum(rate(vm_rows_inserted_total{insertNodes})) * (sum(vm_data_size_bytes{storageNodesSize}) / sum(vm_rows{storageNodesSize})) * (3600 * 24 * 30.4167 * $retention)) / sum(count(vm_app_version{storageNodes}))",
+          "expr": "with(\n  insertNodes = {job=~\"$job\", instance=~\"$instance_insert\"},\n  storageNodes = {job=~\"$job\", instance=~\"$instance_storage\"}\n )\n( ( sum(rate(vm_rows_inserted_total{insertNodes})) - sum(avg_over_time(rate(vm_deduplicated_samples_total{storageNodes, type=\"merge\"})[$__range])) ) * ( sum(vm_data_size_bytes{storageNodes, type!=\"indexdb\"}) / sum(vm_rows{storageNodes, type!=\"indexdb\"}) ) * ( 3600 * 24 * 30.4167 * $retention ) ) / sum(count(vm_app_version{storageNodes}))",
           "instant": false,
           "legendFormat": "",
           "refId": "A"
@@ -3666,7 +3666,7 @@
           "dashLength": 10,
           "dashes": false,
           "datasource": "$datasource",
-          "description": "zstd compression ratio",
+          "description": "Removed superflouos samples from time series if they are located closer to each other than the dedup duration. Keep in mind that dedup on the storage is only performed during merge (aka delayed).\n\nSee the `-dedup.minScrapeInterval` flag.",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -3674,96 +3674,6 @@
             "w": 12,
             "x": 12,
             "y": 55
-          },
-          "hiddenSeries": false,
-          "id": 20,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 2,
-          "points": false,
-          "renderer": "flot",
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "expr": "with (\n  storageNodes = {job=~\"$job\", instance=~\"$instance_storage\"}\n)\nsum(vm_zstd_block_compressed_bytes_total{storageNodes}) / sum(vm_zstd_block_original_bytes_total{storageNodes})",
-              "legendFormat": "compression ratio",
-              "refId": "A"
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "vmstorage - Compression Ratio",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "percentunit",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$datasource",
-          "description": "Removed superflouos samples from time series if they are located closer to each other than the dedup duration. Keep in mind that dedup on the storage is only performed during merge (aka delayed).\n\nSee the `-dedup.minScrapeInterval` flag.",
-          "fill": 1,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 0,
-            "y": 64
           },
           "hiddenSeries": false,
           "id": 106,
@@ -3824,6 +3734,96 @@
               "logBase": 1,
               "max": null,
               "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "$datasource",
+          "description": "zstd compression ratio",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 64
+          },
+          "hiddenSeries": false,
+          "id": 20,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "with (\n  storageNodes = {job=~\"$job\", instance=~\"$instance_storage\"}\n)\nsum(vm_zstd_block_compressed_bytes_total{storageNodes}) / sum(vm_zstd_block_original_bytes_total{storageNodes})",
+              "legendFormat": "compression ratio",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "vmstorage - Compression Ratio",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percentunit",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
               "show": true
             },
             {
@@ -5406,5 +5406,5 @@
   "timezone": "",
   "title": "Victoria Metrics cluster - IG1 version",
   "uid": "a5de5bdcd6b4e6cf05a6212209efe6fe",
-  "version": 128
+  "version": 130
 }
